@@ -129,15 +129,15 @@ def delete_subject():
             print_special("inform", "The selected subject has been deleted.")
         # If not in range
         else:
-            print_special("error", "Invalid selection.")
+            print_special("error", "Invalid input. Please pick from the list.")
         # Write changes to file
         file.seek(0)
         json.dump(data, file)
         file.truncate()
 
 
-# Adds a result to a subject in marks.json
-def new_result():
+# Adds a mark to a subject in marks.json
+def new_mark():
     # Open file so it will close when function completes
     with open("marks.json", "r+") as file:
         # Parse JSON into python data
@@ -172,14 +172,14 @@ def new_result():
             pass
         # Handle invalid selection
         else:
-            print_special("error", "Invalid selection.")
+            print_special("error", "Invalid input. Please pick from the list.")
             return
         # Loop over data to find selected_subject
         for subject_index, subject in enumerate(data):
             # Once selected_subject is found
             if subject_index != selected_subject:
                 continue
-            result_name = input(f"Name for new result in {subject['name']} (e.g. \"Math Final\"): ")
+            mark_name = input(f"Name for new mark in {subject['name']} (e.g. \"Math Final\"): ")
             # Get achieved score
             try:
                 score = float(input("Score achieved (e.g. " "\033[92m" "81" "\033[0m" "/100): "))
@@ -202,13 +202,13 @@ def new_result():
             if max_score < score:
                 print_special("error", "Invalid input. Max achieveable score must be higher than score.")
                 return
-            # Add new result to marks
-            subject["marks"].append({"result_name": result_name, "score": score, "max_score": max_score})
+            # Add new mark to marks
+            subject["marks"].append({"mark_name": mark_name, "score": score, "max_score": max_score})
             # Write changes to file
             file.seek(0)
             json.dump(data, file)
             file.truncate()
-            print_special("inform", f"{result_name} has successfully been added to {subject['name']}.")
+            print_special("inform", f"{mark_name} has successfully been added to {subject['name']}.")
 
 
 # Display all marks across all subjects
@@ -228,8 +228,8 @@ def view_all_marks():
                 continue
             # If not empty
             for mark_index, mark in enumerate(subject['marks'], start=1):
-                # Print each result in this format: (1) Math Test: 10/100 [10.00%]
-                print(f"({mark_index}) {mark['result_name']}: {mark['score']}/{mark['max_score']} "
+                # Print each mark in this format: (1) Math Test: 10/100 [10.00%]
+                print(f"({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} "
                       f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
         # Print empty line for better formatting
         print("\n")
@@ -259,6 +259,13 @@ def view_subject_marks():
         if selected_subject == 0:
             print_special("warn", "Mark viewing cancelled.")
             return
+        # Check if selected_subject is within the list range
+        if 0 <= selected_subject <= len(data):
+            pass
+        # Handle invalid selection
+        else:
+            print_special("error", "Invalid input. Please pick from the list.")
+            return
         # Adjust for array beginning at 0
         selected_subject -= 1
         # Loop over subjects to find correct one
@@ -269,19 +276,19 @@ def view_subject_marks():
                 print_special("underline", f"\n{subject['name']}")
                 # Check if subject marks are empty
                 if len(subject['marks']) == 0:
-                    print_special("error", "Empty. No marks to display for this subject.")
+                    print_special("error", "Subject marks empty. Nothing to list.")
                     # Skip current and move to next subject
                     continue
                 # If not empty
                 for mark_index, mark in enumerate(subject['marks'], start=1):
-                    # Print each result in this format: (1) Math Test: 10/100 [10.00%]
-                    print(f"({mark_index}) {mark['result_name']}: {mark['score']}/{mark['max_score']} "
+                    # Print each mark in this format: (1) Math Test: 10/100 [10.00%]
+                    print(f"({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} "
                           f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
         # Print empty line for better formatting
         print("\n")
 
 
-def delete_result():
+def delete_mark():
     # Open file so it will close when function completes
     with open("marks.json", "r+") as file:
         # Parse JSON into python data
@@ -305,24 +312,29 @@ def delete_result():
         if selected_subject == 0:
             print_special("warn", "Deletion cancelled.")
             return
-        # Adjust for array beginning at 0
-        selected_subject -= 1
         # Check if selected_subject is within the list range
         if 0 <= selected_subject <= len(data):
             pass
         # Handle invalid selection
         else:
-            print_special("error", "Invalid selection.")
+            print_special("error", "Invalid input. Please pick from the list.")
             return
+        # Adjust for array beginning at 0
+        selected_subject -= 1
         # Loop over data to find selected_subject
         for subject_index, subject in enumerate(data):
             # Skip non selected subjects
             if subject_index != selected_subject:
                 continue
+            else:
+                pass
             # When correct subjected is selected
+            if len(subject['marks']) == 0:
+                print_special("error", "Subject marks empty. Nothing to list.")
+                return
             # Print each mark in selected_subject
             for mark_index, mark in enumerate(subject['marks'], start=1):
-                print(f"({mark_index}) {mark['result_name']}: {mark['score']}/{mark['max_score']} "
+                print(f"({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} "
                       f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
             # Address case where user wants to cancel
             print_special("inform", "Enter \"0\" to cancel.")
@@ -333,26 +345,27 @@ def delete_result():
             except ValueError:
                 print_special("error", "Invalid input. Please pick from the list")
                 return
-            if selected_subject == 0:
+            if mark_to_delete == 0:
                 print_special("warn", "Deletion cancelled.")
+                return
+            # Check if selected_subject is within the list range
+            if 0 <= mark_to_delete <= len(subject['marks']):
+                pass
+            # Handle invalid selection
+            else:
+                print_special("error", "Invalid input. Please pick from the list.")
                 return
             # Adjust for array beginning at 0
             mark_to_delete -= 1
-            # Check if selected_subject is within the list range
-            if 0 <= mark_to_delete <= len(subject['marks']):
-                # Delete subject from list
-                subject['marks'].pop(mark_to_delete)
-                print_special("inform", "The selected mark has been deleted.")
-            # Handle invalid selection
-            else:
-                print_special("error", "Invalid selection.")
-                return
+            # Delete subject from list
+            subject['marks'].pop(mark_to_delete)
+            print_special("inform", "The selected mark has been deleted.")
             # Write changes to file
             file.seek(0)
             json.dump(data, file)
             file.truncate()
-            # Exit loop
-            break
+            # When complete exit function
+            return
 
 
 def get_action():
@@ -360,8 +373,8 @@ def get_action():
     print("(0) Exit Markinator\n"
           "(1) Make a new subject\n"
           "(2) Delete a subject\n"
-          "(3) Add new result\n"
-          "(4) Delete a result\n"
+          "(3) Add new mark\n"
+          "(4) Delete a mark\n"
           "(5) View all marks\n"
           "(6) View subject marks\n"
           )
@@ -382,9 +395,9 @@ def get_action():
     elif action == 2:
         delete_subject()
     elif action == 3:
-        new_result()
+        new_mark()
     elif action == 4:
-        delete_result()
+        delete_mark()
     elif action == 5:
         view_all_marks()
     elif action == 6:
