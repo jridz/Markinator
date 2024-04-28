@@ -57,12 +57,25 @@ A simple command line application for recording, viewing, and managing results f
 ### Data types used
 
 1. Integers (int)
+    - `action` in `get_action()`
+    - `len(data)` in `new_mark()`
+    - `subject_index` in `view_all_marks()`
 2. Floating point nubers (float)
+    - `score` and `max_score` in `new_mark()`
 3. Strings (str)
+    - `confirmation` in `marksfile_exists()`
+    - `subject_name` in `new_subject()`
+    - `mark_name` in `new_mark()`
 4. Boolean (bool)
+    - `True` and `False` from `return` in `marksfile_exists()`
 5. List/Array (list)
+    - `data` in `new_subject()`
+    - `subject["marks"]` in `new_mark()`
 6. None (None)
-7. JSON/Dictionary
+    - `not` from `if not marksfile_exists()` in `main()`
+7. JSON
+    - From `marks.json`
+    - `file` in `delete_mark()`
 
 ## Debugging Tools
 
