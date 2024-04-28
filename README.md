@@ -2,6 +2,8 @@
 
 Term 1's Software Engineering assignment.
 
+View the full project at https://github.com/jridz/Markinator
+
 ## Description
 
 A simple command line application for recording, viewing, and managing results for assignments and tests.
