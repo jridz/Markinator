@@ -15,7 +15,7 @@ def print_special(action, text):
         print("\033[94m" + "Note: " + text + "\033[0m")
     # If action not found
     else:
-        print("print_special() action not found.")
+        print(f"Internal Error: Action in print_special({action}, {text}) not found.")
 
 
 # Calculate percentage from score and max_score
