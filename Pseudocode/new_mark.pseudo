@@ -1,0 +1,47 @@
+new_mark():
+    OPEN marks.json as file:
+        data = JSON load file
+        IF data.length() = 0:
+            print_special(error, "Empty file. No subjects to add to.")
+            RETURN
+        FOR subject_index, subject in enumerate(data, start=1):
+            Print "{subject_index}) {subject['name']}"
+        print_special(inform, "Enter 0 to cancel.")
+        TRY:
+            selected_subject = Input int "Enter the number of the subject you want to add a mark to:"
+        CATCH ValueError:
+            print_special(error, "Invalid input. Please pick from the list")
+            RETURN
+        IF selected_subject = 0:
+            print_special(warn, "Creation cancelled.")
+            RETURN
+        selected_subject--
+        IF 0 <= subject_to_delete <= data.length():
+            PASS
+        ELSE:
+            print_special(error, "Invalid input. Please pick from the list.")
+            RETURN
+        FOR subject_index, subject in enumerate(data):
+            IF subject_index != selected_subject:
+                CONTINUE
+            mark_name = Input "Name for new mark in {subject['name']}:"
+            TRY:
+                score = Input float "Score achieved:"
+            CATCH ValueError:
+                print_special(error, "Invalid input. Must be a number.")
+                RETURN
+            IF score < 0:
+                print_special(error, "Invalid input. Score must be 0 or higher.")
+                RETURN
+            TRY:
+                max_score = Input float "Max score achievable:"
+            CATCH ValueError:
+                print_special(error, "Invalid input. Must be a number.")
+                RETURN
+            IF max_score < score:
+                print_special(error, "Invalid input. Max achieveable score must be higher than score.")
+                RETURN
+            subject["marks"].append({"mark_name": mark_name, "score": score, "max_score": max_score})
+            JSON dump data -> file
+            print_special(inform, "{mark_name} has successfully been added to {subject['name']}.")
+            RETURN

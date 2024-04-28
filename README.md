@@ -96,7 +96,7 @@ The function is often triggered when I enter incorrect data into the program. I 
 An example of where I used them was when you are entering in a result's score. Since errors wouldn't be triggered if the data is correct,
 I checked for data the should be errored by using the fact that the errors wouldn't trigger.
 
-## Errors
+## Error
 ### Function stopping unexpectedly
 In the `view_result()` function there was the following code:
 ```python

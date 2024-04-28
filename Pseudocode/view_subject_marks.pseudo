@@ -1,0 +1,33 @@
+view_subject_marks():
+    OPEN marks.json as file:
+        data = JSON load file
+        IF data.length() = 0:
+            print_special(error, "Empty file. Nothing to list.")
+            RETURN
+        FOR subject_index, subject in enumerate(data, start=1):
+            Print "({subject_index}) {subject['name']}"
+        print_special(inform, "Enter 0 to cancel.")
+        TRY:
+            selected_subject = Input int "Enter the number of the subject you want to list marks from:"
+        CATCH: ValueError:
+            print_special(error, "Invalid input. Please pick from the list")
+            RETURN
+        if selected_subject = 0:
+            print_special(warn, "Mark viewing cancelled.")
+            RETURN
+        IF 0 <= selected_subject <= data.length():
+            PASS
+        else:
+            print_special(error, "Invalid input. Please pick from the list.")
+            RETURN
+        selected_subject--
+        FOR subject_index, subject in enumerate(data):
+            IF subject_index != selected_subject:
+                CONTINUE
+            print_special(underline, "{subject['name']}")
+            IF subject['marks'].length() = 0:
+                print_special(error, "Subject marks empty. Nothing to list.")
+                CONTINUE
+            FOR mark_index, mark in enumerate(subject['marks'], start=1):
+                Print "({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} [{calculate_percentage(mark['score'], mark['max_score'])}]"
+            RETURN

@@ -1,0 +1,35 @@
+get_action():
+    Print """
+          (0) Exit Markinator\n
+          (1) Make a new subject\n
+          (2) Delete a subject\n
+          (3) Add new mark\n
+          (4) Delete a mark\n
+          (5) View all marks\n
+          (6) View subject marks\n
+          """
+    TRY:
+        action = Input int "Would you like to make marks.json?"
+    CATCH ValueError:
+        print_special(error, "Invalid action. Please pick from the list")
+        RETURN
+    IF action = 0:
+        print_special("inform", "Thanks for using Markinator!")
+        print("Exiting...")
+        exit()
+    ELIF action = 1:
+        new_subject()
+    ELIF action = 2:
+        delete_subject()
+    ELIF action = 3:
+        new_mark()
+    ELIF action = 4:
+        delete_mark()
+    ELIF action = 5:
+        view_all_marks()
+    ELIF action = 6:
+        view_subject_marks()
+    ELSE:
+        print_special(error, "Invalid input. Please pick from the list")
+        RETURN
+    RETURN

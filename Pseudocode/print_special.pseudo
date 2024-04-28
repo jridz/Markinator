@@ -1,0 +1,11 @@
+print_spcial(action, text):
+    IF action = underline:
+        Print "\033[4m" + text + "\033[0m"
+    ELIF action = error:
+        Print "\033[91m" + "Error: " + text + "\033[0m"
+    ELIF action = warn:
+        Print "\033[93m" + "Warning: " + text + "\033[0m"
+    ELIF action = inform:
+        Print "\033[94m" + "Note: " + text + "\033[0m"
+    ELSE:
+        Print "Action not found"

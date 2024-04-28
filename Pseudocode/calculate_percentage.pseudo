@@ -1,0 +1,4 @@
+calculate_percentage(score, max_score):
+    percentage = (score / max_score) * 100
+    percentage = Round percentage to 2 d.p. + "%"
+    RETURN percentage

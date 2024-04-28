@@ -75,6 +75,7 @@ def new_subject():
         file.truncate()
         # Inform that subject was created
         print_special("inform", f"Created subject {subject_name}!")
+        return
 
 
 # Deletes a subject from marks.json
@@ -116,11 +117,13 @@ def delete_subject():
         subject_to_delete -= 1
         # Delete subject from file
         data.pop(subject_to_delete)
-        print_special("inform", "The selected subject has been deleted.")
         # Write changes to file
         file.seek(0)
         json.dump(data, file)
         file.truncate()
+        # Inform that subject was deleted
+        print_special("inform", "The selected subject has been deleted.")
+        return
 
 
 # Adds a mark to a subject in marks.json
@@ -129,7 +132,7 @@ def new_mark():
         data = json.load(file)
         # Address possibly empty file
         if len(data) == 0:
-            print_special("error", "Empty file. Nothing to delete.")
+            print_special("error", "Empty file. No subjects to add to.")
             return
         # List subjects
         for subject_index, subject in enumerate(data, start=1):
@@ -169,7 +172,6 @@ def new_mark():
             # Get max score
             try:
                 max_score = float(input("Max score achievable (e.g. " "81/" "\033[92m" "100" "\033[0m" "): "))
-            # Handle invalid inputs
             except ValueError:
                 print_special("error", "Invalid input. Must be a number.")
                 return
@@ -184,6 +186,7 @@ def new_mark():
             json.dump(data, file)
             file.truncate()
             print_special("inform", f"{mark_name} has successfully been added to {subject['name']}.")
+            return
 
 
 # Display all marks across all subjects
@@ -204,6 +207,7 @@ def view_all_marks():
                 print(f"({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} "
                       f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
         print("\n")
+        return
 
 
 def view_subject_marks():
@@ -250,6 +254,7 @@ def view_subject_marks():
                       f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
         # Print empty line for better formatting
         print("\n")
+        return
 
 
 def delete_mark():

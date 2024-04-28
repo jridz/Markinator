@@ -1,0 +1,11 @@
+view_all_marks():
+    OPEN marks.json as file:
+        data = JSON load file
+        FOR subject_index, subject in enumerate(data, start=1):
+            print_special(underline, "{subject['name']}")
+            IF subject['marks']).length() == 0:
+                Print "(N/A) No marks for this subject."
+                CONTINUE
+            FOR mark_index, mark in enumerate(subject['marks'], start=1):
+                Print "({mark_index}) {mark['mark_name']}: {mark['score']}/{mark['max_score']} [{calculate_percentage(mark['score'], mark['max_score'])}]"
+            RETURN

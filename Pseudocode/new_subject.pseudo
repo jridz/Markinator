@@ -1,0 +1,14 @@
+new_subject():
+    OPEN marks.json as file:
+        data = JSON load file
+        subject_name = Input "New subject name:"
+        confirmation = Input "Are you sure you want to create {subject_name}?"
+        IF confirmation = yes:
+            PASS
+        ELSE:
+            print_special(warn, "Subject creation cancelled.")
+            RETURN
+        data.append({"name": subject_name, "marks": []})
+        JSON dump data -> file
+        print_special(inform, "Created subject {subject_name}!")
+        RETURN

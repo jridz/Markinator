@@ -1,0 +1,16 @@
+marksfile_exists():
+    IF marks.json exists:
+        IF marks.json is empty:
+            WRITE [] to marks.json
+        RETURN True
+    ELSE:
+        print_special(warn, "Marksfile does not exist.")
+        confirmation = Input "Would you like to make marks.json?"
+        IF confirmation = yes:
+            MAKEFILE marks.json
+            WRITE [] to marks.json
+            print_special(inform, "Successfully created marks.json!")
+            RETURN True
+        ELSE:
+            print_special(warn, "File not created.")
+            RETURN False

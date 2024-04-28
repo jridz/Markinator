@@ -1,0 +1,7 @@
+main():
+    print_special(underlined, "Welcome!")
+    IF NOT marksfile_exists():
+        print_special(error, "Cannot load marks.json")
+        EXIT
+    WHILE True:
+        get_action()

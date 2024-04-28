@@ -1,0 +1,33 @@
+delete_subject():
+    OPEN marks.json as file:
+        data = JSON load file
+        IF data.length() = 0:
+            print_special(error, "Empty file. Nothing to delete.")
+            RETURN
+        FOR subject_index, subject in enumerate(data, start=1):
+            Print "{subject_index}) {subject['name']}"
+        print_special(inform, "Enter 0 to cancel.")
+        TRY:
+            subject_to_delete = Input int "Enter the number of the subject you want to delete:")
+        CATCH ValueError:
+            print_special(error, "Invalid input. Please pick from the list")
+            RETURN
+        IF subject_to_delete = 0:
+            print_special(warn, "Deletion cancelled.")
+            RETURN
+        confirmation = Input "Are you sure you want to delete {subject_to_delete}?"
+        IF confirmation = yes:
+            PASS
+        ELSE:
+            print_special(warn, "Deletion cancelled.")
+            RETURN
+        IF 0 <= subject_to_delete <= data.length():
+            PASS
+        ELSE:
+            print_special(error, "Invalid input. Please pick from the list.")
+            RETURN
+        subject_to_delete--
+        data.pop(subject_to_delete)
+        JSON dump data -> file
+        print_special(inform, "The selected subject has been deleted.")
+        RETURN
