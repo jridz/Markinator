@@ -100,7 +100,7 @@ def delete_subject():
             print(f"({subject_index}) {subject['name']}")
         # Address case where user wants to cancel
         print_special("inform", "Enter \"0\" to cancel.")
-        # Get item to delete
+        # Get subject to delete
         try:
             subject_to_delete = int(input("Enter the number of the subject you want to delete: "))
         # Handle invalid inputs
@@ -122,7 +122,7 @@ def delete_subject():
             return
         # Adjust for array beginning at 0
         subject_to_delete -= 1
-        # Check if item_to_delete is within the list range
+        # Check if subject_to_delete is within the list range
         if 0 <= subject_to_delete <= len(data):
             # Delete subject from list
             data.pop(subject_to_delete)
@@ -177,37 +177,38 @@ def new_result():
         # Loop over data to find selected_subject
         for subject_index, subject in enumerate(data):
             # Once selected_subject is found
-            if subject_index == selected_subject:
-                result_name = input(f"Name for new result in {subject['name']} (e.g. \"Math Final\"): ")
-                # Get achieved score
-                try:
-                    score = float(input("Score achieved (e.g. " "\033[92m" "81" "\033[0m" "/100): "))
-                # Handle invalid inputs
-                except ValueError:
-                    print_special("error", "Invalid input. Must be a number.")
-                    return
-                # Disallow negative scores
-                if score < 0:
-                    print_special("error", "Invalid input. Score must be 0 or higher.")
-                    return
-                # Get max score
-                try:
-                    max_score = float(input("Max score achievable (e.g. " "81/" "\033[92m" "100" "\033[0m" "): "))
-                # Handle invalid inputs
-                except ValueError:
-                    print_special("error", "Invalid input. Must be a number.")
-                    return
-                # Disallow invalid score ratios
-                if max_score < score:
-                    print_special("error", "Invalid input. Max achieveable score must be higher than score.")
-                    return
-                # Add new result to marks
-                subject["marks"].append({"result_name": result_name, "score": score, "max_score": max_score})
-                # Write changes to file
-                file.seek(0)
-                json.dump(data, file)
-                file.truncate()
-                print_special("inform", f"{result_name} has successfully been added to {subject['name']}.")
+            if subject_index != selected_subject:
+                continue
+            result_name = input(f"Name for new result in {subject['name']} (e.g. \"Math Final\"): ")
+            # Get achieved score
+            try:
+                score = float(input("Score achieved (e.g. " "\033[92m" "81" "\033[0m" "/100): "))
+            # Handle invalid inputs
+            except ValueError:
+                print_special("error", "Invalid input. Must be a number.")
+                return
+            # Disallow negative scores
+            if score < 0:
+                print_special("error", "Invalid input. Score must be 0 or higher.")
+                return
+            # Get max score
+            try:
+                max_score = float(input("Max score achievable (e.g. " "81/" "\033[92m" "100" "\033[0m" "): "))
+            # Handle invalid inputs
+            except ValueError:
+                print_special("error", "Invalid input. Must be a number.")
+                return
+            # Disallow invalid score ratios
+            if max_score < score:
+                print_special("error", "Invalid input. Max achieveable score must be higher than score.")
+                return
+            # Add new result to marks
+            subject["marks"].append({"result_name": result_name, "score": score, "max_score": max_score})
+            # Write changes to file
+            file.seek(0)
+            json.dump(data, file)
+            file.truncate()
+            print_special("inform", f"{result_name} has successfully been added to {subject['name']}.")
 
 
 # Display all marks across all subjects
@@ -223,6 +224,7 @@ def view_all_marks():
             # Check if subject marks are empty
             if len(subject['marks']) == 0:
                 print("(N/A) No marks for this subject.")
+                # Skip current and move to next subject
                 continue
             # If not empty
             for mark_index, mark in enumerate(subject['marks'], start=1):
@@ -259,15 +261,15 @@ def view_subject_marks():
             return
         # Adjust for array beginning at 0
         selected_subject -= 1
-        # Print subject name
-        print_special("underline", f"\n{subject['name']}")
         # Loop over subjects to find correct one
         for subject_index, subject in enumerate(data):
             # If current subject is correct
             if subject_index == selected_subject:
+                # Print subject name
+                print_special("underline", f"\n{subject['name']}")
                 # Check if subject marks are empty
                 if len(subject['marks']) == 0:
-                    print("(N/A) No marks for this subject.")
+                    print_special("error", "Empty. No marks to display for this subject.")
                     # Skip current and move to next subject
                     continue
                 # If not empty
@@ -277,6 +279,80 @@ def view_subject_marks():
                           f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
         # Print empty line for better formatting
         print("\n")
+
+
+def delete_result():
+    # Open file so it will close when function completes
+    with open("marks.json", "r+") as file:
+        # Parse JSON into python data
+        data = json.load(file)
+        # Address possibly empty file
+        if len(data) == 0:
+            print_special("error", "Empty file. Nothing to list.")
+            return
+        # Print out each subject"s name
+        for subject_index, subject in enumerate(data, start=1):
+            print(f"({subject_index}) {subject['name']}")
+        # Address case where user wants to cancel
+        print_special("inform", "Enter \"0\" to cancel.")
+        # Get subject to delete from
+        try:
+            selected_subject = int(input("Enter the number of the subject you want to delete from: "))
+        # Handle invalid inputs
+        except ValueError:
+            print_special("error", "Invalid input. Please pick from the list")
+            return
+        if selected_subject == 0:
+            print_special("warn", "Deletion cancelled.")
+            return
+        # Adjust for array beginning at 0
+        selected_subject -= 1
+        # Check if selected_subject is within the list range
+        if 0 <= selected_subject <= len(data):
+            pass
+        # Handle invalid selection
+        else:
+            print_special("error", "Invalid selection.")
+            return
+        # Loop over data to find selected_subject
+        for subject_index, subject in enumerate(data):
+            # Skip non selected subjects
+            if subject_index != selected_subject:
+                continue
+            # When correct subjected is selected
+            # Print each mark in selected_subject
+            for mark_index, mark in enumerate(subject['marks'], start=1):
+                print(f"({mark_index}) {mark['result_name']}: {mark['score']}/{mark['max_score']} "
+                      f"[{calculate_percentage(mark['score'], mark['max_score'])}]")
+            # Address case where user wants to cancel
+            print_special("inform", "Enter \"0\" to cancel.")
+            # Get subject to delete from
+            try:
+                mark_to_delete = int(input("Enter the number of the mark you want to delete: "))
+            # Handle invalid inputs
+            except ValueError:
+                print_special("error", "Invalid input. Please pick from the list")
+                return
+            if selected_subject == 0:
+                print_special("warn", "Deletion cancelled.")
+                return
+            # Adjust for array beginning at 0
+            mark_to_delete -= 1
+            # Check if selected_subject is within the list range
+            if 0 <= mark_to_delete <= len(subject['marks']):
+                # Delete subject from list
+                subject['marks'].pop(mark_to_delete)
+                print_special("inform", "The selected mark has been deleted.")
+            # Handle invalid selection
+            else:
+                print_special("error", "Invalid selection.")
+                return
+            # Write changes to file
+            file.seek(0)
+            json.dump(data, file)
+            file.truncate()
+            # Exit loop
+            break
 
 
 def get_action():
@@ -307,6 +383,8 @@ def get_action():
         delete_subject()
     elif action == 3:
         new_result()
+    elif action == 4:
+        delete_result()
     elif action == 5:
         view_all_marks()
     elif action == 6:
